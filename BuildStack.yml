@@ -23,7 +23,9 @@ Resources:
       SubnetId: !Ref SubnetIdParameter
       InstanceType: 
         Ref: InstanceTypeParameter
-      SecurityGroupIds: !Ref SecurityGroupIdParameter
+      SecurityGroupIds: 
+        - 
+          !Ref SecurityGroupIdParameter
       KeyName: OhioTestEnvironment
       Tags:
         -
