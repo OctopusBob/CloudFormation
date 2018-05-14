@@ -1,6 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"    
-Resources:
-  Parameters:
+Parameters:
     InstanceTypeParameter:
         Type: String
         Default: t2.micro
@@ -72,6 +71,7 @@ Resources:
     SecurityKeyName:
         Type: String
         Default: OhioTestEnvironment
+Resources:
   Instance:
     Type: 'AWS::EC2::Instance'
     Properties:
