@@ -8,10 +8,10 @@ Parameters:
     Type: String
     Default: ami-ac8dbdc9
     Description: AMI Image
-  SubnetId:
+  SubnetIdParameter:
     Type: String
     Default: subnet-ee74d194
-  SecurityGroupId:
+  SecurityGroupIdParameter:
     Type: String
     Default: sg-a19f7acb
 Resources:
@@ -19,10 +19,11 @@ Resources:
     Type: 'AWS::EC2::Instance'
     Properties:
       ImageId: !Ref AMI
-      SubnetId: !Ref SubnetId
+      SubnetId: !Ref SubnetIdParameter
       InstanceType: 
         Ref: InstanceTypeParameter
-      SecurityGroupIds: !Ref SecurityGroupId
+      SecurityGroups: 
+        Ref: SecurityGroupIdParameter
       KeyName: OhioTestEnvironment
       Tags:
         -
