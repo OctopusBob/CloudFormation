@@ -7,8 +7,7 @@ Resources:
       SubnetId: subnet-ee74d194
       InstanceType: t2.micro
       SecurityGroupIds: sg-a19f7acb
-      KeyName: 
-        Ref: "OhioTestEnvironment"
+      KeyName: OhioTestEnvironment
       Tags:
         -
           Key: Name
