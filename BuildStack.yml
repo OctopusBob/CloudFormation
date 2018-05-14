@@ -1,5 +1,4 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Parameters:    
+AWSTemplateFormatVersion: "2010-09-09"    
 Resources:
   Instance:
     Type: 'AWS::EC2::Instance'
