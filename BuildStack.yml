@@ -13,6 +13,7 @@ Parameters:
     Default: subnet-ee74d194
   SecurityGroupIdParameter:
     Type: String
+    MinLength: "1"
     Default: sg-a19f7acb
 Resources:
   Instance:
@@ -22,7 +23,7 @@ Resources:
       SubnetId: !Ref SubnetIdParameter
       InstanceType: 
         Ref: InstanceTypeParameter
-      SecurityGroups: 
+      SecurityGroupIds:  
         Ref: SecurityGroupIdParameter
       KeyName: OhioTestEnvironment
       Tags:
