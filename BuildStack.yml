@@ -77,9 +77,11 @@ Resources:
     Properties:
       ImageId: !Ref AMI
       SubnetId: !Ref SubnetId
-      InstanceType: !Ref InstanceTypeParameter
+      InstanceType: 
+        - Ref: InstanceTypeParameter
       SecurityGroupIds: !Ref SecurityGroupId
-      KeyName: !Ref SecurityKeyName
+      KeyName: 
+        - Ref: SecurityKeyName
       Tags:
         -
           Key: Name
