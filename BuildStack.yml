@@ -30,4 +30,27 @@ Resources:
       Tags:
         -
           Key: Name
-          Value: Instance      
+          Value: Instance
+      UserData:
+        Fn::Base64: !Join
+          - ''
+          -
+            - |-
+              <powershell>
+              Start-Transcript -path "C:\Bootstrap.txt" -append
+
+              Write-Host "Configure IIS"
+              Dism /Online /Enable-Feature /FeatureName:IIS-ASPNET /All
+              Dism /Online /Enable-Feature /FeatureName:IIS-ASPNET45 /All
+              Dism /Online /Enable-Feature /FeatureName:IIS-CertProvider /All
+              Dism /Online /Enable-Feature /FeatureName:IIS-HttpRedirect /All
+              Dism /Online /Enable-Feature /FeatureName:IIS-BasicAuthentication /All
+              Dism /Online /Enable-Feature /FeatureName:IIS-WebSockets /All
+              Dism /Online /Enable-Feature /FeatureName:IIS-ApplicationInit /All
+              Dism /Online /Enable-Feature /FeatureName:IIS-CustomLogging /All
+              Dism /Online /Enable-Feature /FeatureName:IIS-ManagementService /All
+              Dism /Online /Enable-Feature /FeatureName:WCF-Services45 /All
+              Dism /Online /Enable-Feature /FeatureName:WCF-HTTP-Activation45 /All
+              Dism /Online /Enable-Feature /FeatureName:IIS-WindowsAuthentication /All
+              Dism /online /enable-feature /featurename:NetFX3 /All
+              </powershell>
