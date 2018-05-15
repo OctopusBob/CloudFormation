@@ -48,22 +48,21 @@ Resources:
             - |-
               <powershell>
               Start-Transcript -path "C:\Bootstrap.txt" -append
-
-              Write-Output "Configure IIS"
-              Dism /Online /Enable-Feature /FeatureName:IIS-ASPNET /All
-              Dism /Online /Enable-Feature /FeatureName:IIS-ASPNET45 /All
-              Dism /Online /Enable-Feature /FeatureName:IIS-CertProvider /All
-              Dism /Online /Enable-Feature /FeatureName:IIS-HttpRedirect /All
-              Dism /Online /Enable-Feature /FeatureName:IIS-BasicAuthentication /All
-              Dism /Online /Enable-Feature /FeatureName:IIS-WebSockets /All
-              Dism /Online /Enable-Feature /FeatureName:IIS-ApplicationInit /All
-              Dism /Online /Enable-Feature /FeatureName:IIS-CustomLogging /All
-              Dism /Online /Enable-Feature /FeatureName:IIS-ManagementService /All
-              Dism /Online /Enable-Feature /FeatureName:WCF-Services45 /All
-              Dism /Online /Enable-Feature /FeatureName:WCF-HTTP-Activation45 /All
-              Dism /Online /Enable-Feature /FeatureName:IIS-WindowsAuthentication /All
-              Dism /online /enable-feature /featurename:NetFX3 /All
               
+              Write-Output "Configure IIS using DISM"
+              Dism /Online /Enable-Feature /FeatureName:IIS-ASPNET /All | Write-Output
+              Dism /Online /Enable-Feature /FeatureName:IIS-ASPNET45 /All | Write-Output
+              Dism /Online /Enable-Feature /FeatureName:IIS-CertProvider /All | Write-Output
+              Dism /Online /Enable-Feature /FeatureName:IIS-HttpRedirect /All | Write-Output
+              Dism /Online /Enable-Feature /FeatureName:IIS-BasicAuthentication /All | Write-Output
+              Dism /Online /Enable-Feature /FeatureName:IIS-WebSockets /All | Write-Output
+              Dism /Online /Enable-Feature /FeatureName:IIS-ApplicationInit /All | Write-Output
+              Dism /Online /Enable-Feature /FeatureName:IIS-CustomLogging /All | Write-Output
+              Dism /Online /Enable-Feature /FeatureName:IIS-ManagementService /All | Write-Output
+              Dism /Online /Enable-Feature /FeatureName:WCF-Services45 /All | Write-Output
+              Dism /Online /Enable-Feature /FeatureName:WCF-HTTP-Activation45 /All | Write-Output
+              Dism /Online /Enable-Feature /FeatureName:IIS-WindowsAuthentication /All | Write-Output
+             
               Write-Output "Open port 8088 on Windows Firewall" 
               & netsh.exe firewall add portopening TCP 8088 "Trading Website" 
  
@@ -130,39 +129,39 @@ Resources:
 
                 Set-Location "${env:ProgramFiles}\Octopus Deploy\Tentacle" 
 
-                & .\tentacle.exe create-instance --instance "Tentacle" --config $tentacleConfigFile --console 
-                if ($lastExitCode -ne 0) { 
-                  throw "Installation failed on create-instance" 
-                } 
-                & .\tentacle.exe configure --instance "Tentacle" --home $tentacleHomeDirectory --console 
-                if ($lastExitCode -ne 0) { 
-                  throw "Installation failed on configure" 
-                } 
-                & .\tentacle.exe configure --instance "Tentacle" --app $tentacleAppDirectory --console 
-                if ($lastExitCode -ne 0) { 
-                  throw "Installation failed on configure" 
-                } 
-                & .\tentacle.exe configure --instance "Tentacle" --port $tentacleListenPort --console 
-                if ($lastExitCode -ne 0) { 
-                  throw "Installation failed on configure" 
-                } 
-                & .\tentacle.exe new-certificate --instance "Tentacle" --console 
-                if ($lastExitCode -ne 0) { 
-                  throw "Installation failed on creating new certificate" 
-                } 
-                & .\tentacle.exe configure --instance "Tentacle" --trust $octopusServerThumbprint --console
-                if ($lastExitCode -ne 0) { 
-                  throw "Installation failed on configure" 
-                } 
-                & .\tentacle.exe register-with --instance "Tentacle" --server $octopusServerUrl --role "Database-TerraForm" --role "Web-TerraForm" --environment "Dev" --environment "Test" --environment "Pre-Prod" --environment "Production" --name $computerName --publicHostName $ipAddress --apiKey $octopusApiKey --comms-style TentaclePassive --force --console
-                if ($lastExitCode -ne 0) { 
-                  throw "Installation failed on register-with" 
-                } 
+              & .\tentacle.exe create-instance --instance "Tentacle" --config $tentacleConfigFile --console | Write-Output
+              if ($lastExitCode -ne 0) { 
+                throw "Installation failed on create-instance" 
+              } 
+              & .\tentacle.exe configure --instance "Tentacle" --home $tentacleHomeDirectory --console | Write-Output
+              if ($lastExitCode -ne 0) { 
+                throw "Installation failed on configure" 
+              } 
+              & .\tentacle.exe configure --instance "Tentacle" --app $tentacleAppDirectory --console | Write-Output
+              if ($lastExitCode -ne 0) { 
+                throw "Installation failed on configure" 
+              } 
+              & .\tentacle.exe configure --instance "Tentacle" --port $tentacleListenPort --console | Write-Output
+              if ($lastExitCode -ne 0) { 
+                throw "Installation failed on configure" 
+              } 
+              & .\tentacle.exe new-certificate --instance "Tentacle" --console | Write-Output
+              if ($lastExitCode -ne 0) { 
+                throw "Installation failed on creating new certificate" 
+              } 
+              & .\tentacle.exe configure --instance "Tentacle" --trust $octopusServerThumbprint --console | Write-Output
+              if ($lastExitCode -ne 0) { 
+                throw "Installation failed on configure" 
+              } 
+              & .\tentacle.exe register-with --instance "Tentacle" --server $octopusServerUrl --role "Database-TerraForm" --role "Web-TerraForm" --environment "Dev" --environment "Test" --environment "Pre-Prod" --environment "Prod" --name $computerName --publicHostName $ipAddress --apiKey $octopusApiKey --comms-style TentaclePassive --force --console | Write-Output
+              if ($lastExitCode -ne 0) { 
+                throw "Installation failed on register-with" 
+              } 
 
-                & .\tentacle.exe service --instance "Tentacle" --install --start --console 
-                if ($lastExitCode -ne 0) { 
-                  throw "Installation failed on service install" 
-                } 
+              & .\tentacle.exe service --instance "Tentacle" --install --start --console | Write-Output
+              if ($lastExitCode -ne 0) { 
+                throw "Installation failed on service install" 
+              } 
 
-                Write-Output "Tentacle commands complete"              
+              Write-Output "Tentacle commands complete"                        
               </powershell>
