@@ -80,7 +80,7 @@ Resources:
  
               function Get-MyPublicIPAddress { 
                   # Get Ip Address of Machine 
-                  Write-Output "Getting public IP address" 
+                  Write-Host "Getting public IP address" 
                   $ipAddress = Invoke-RestMethod http://ipinfo.io/json | Select-Object -exp ip 
                   return $ipAddress 
               } 
@@ -92,7 +92,7 @@ Resources:
                   [string]$saveAs 
                 ) 
  
-                Write-Output "Downloading $url to $saveAs" 
+                Write-Host "Downloading $url to $saveAs" 
                 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 
                 $downloader = new-object System.Net.WebClient 
                 $downloader.DownloadFile($url, $saveAs) 
@@ -130,36 +130,36 @@ Resources:
 
                 Set-Location "${env:ProgramFiles}\Octopus Deploy\Tentacle" 
 
-                & .\tentacle.exe create-instance --instance "Tentacle" --config $tentacleConfigFile --console | Write-Output 
+                & .\tentacle.exe create-instance --instance "Tentacle" --config $tentacleConfigFile --console 
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on create-instance" 
                 } 
-                & .\tentacle.exe configure --instance "Tentacle" --home $tentacleHomeDirectory --console | Write-Output 
+                & .\tentacle.exe configure --instance "Tentacle" --home $tentacleHomeDirectory --console 
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on configure" 
                 } 
-                & .\tentacle.exe configure --instance "Tentacle" --app $tentacleAppDirectory --console | Write-Output 
+                & .\tentacle.exe configure --instance "Tentacle" --app $tentacleAppDirectory --console 
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on configure" 
                 } 
-                & .\tentacle.exe configure --instance "Tentacle" --port $tentacleListenPort --console | Write-Output 
+                & .\tentacle.exe configure --instance "Tentacle" --port $tentacleListenPort --console 
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on configure" 
                 } 
-                & .\tentacle.exe new-certificate --instance "Tentacle" --console | Write-Output 
+                & .\tentacle.exe new-certificate --instance "Tentacle" --console 
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on creating new certificate" 
                 } 
-                & .\tentacle.exe configure --instance "Tentacle" --trust $octopusServerThumbprint --console  | Write-Output 
+                & .\tentacle.exe configure --instance "Tentacle" --trust $octopusServerThumbprint --console
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on configure" 
                 } 
-                & .\tentacle.exe register-with --instance "Tentacle" --server $octopusServerUrl --role "Database-TerraForm" --role "Web-TerraForm" --environment "Dev" --environment "Test" --environment "Pre-Prod" --environment "Production" --name $computerName --publicHostName $ipAddress --apiKey $octopusApiKey --comms-style TentaclePassive --force --console | Write-Output 
+                & .\tentacle.exe register-with --instance "Tentacle" --server $octopusServerUrl --role "Database-TerraForm" --role "Web-TerraForm" --environment "Dev" --environment "Test" --environment "Pre-Prod" --environment "Production" --name $computerName --publicHostName $ipAddress --apiKey $octopusApiKey --comms-style TentaclePassive --force --console
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on register-with" 
                 } 
 
-                & .\tentacle.exe service --instance "Tentacle" --install --start --console | Write-Output 
+                & .\tentacle.exe service --instance "Tentacle" --install --start --console 
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on service install" 
                 } 
