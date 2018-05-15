@@ -49,7 +49,7 @@ Resources:
               <powershell>
               Start-Transcript -path "C:\Bootstrap.txt" -append
 
-              Write-Host "Configure IIS"
+              Write-Output "Configure IIS"
               Dism /Online /Enable-Feature /FeatureName:IIS-ASPNET /All
               Dism /Online /Enable-Feature /FeatureName:IIS-ASPNET45 /All
               Dism /Online /Enable-Feature /FeatureName:IIS-CertProvider /All
@@ -80,7 +80,7 @@ Resources:
  
               function Get-MyPublicIPAddress { 
                   # Get Ip Address of Machine 
-                  Write-Host "Getting public IP address" 
+                  Write-Output "Getting public IP address" 
                   $ipAddress = Invoke-RestMethod http://ipinfo.io/json | Select-Object -exp ip 
                   return $ipAddress 
               } 
@@ -92,7 +92,7 @@ Resources:
                   [string]$saveAs 
                 ) 
  
-                Write-Host "Downloading $url to $saveAs" 
+                Write-Output "Downloading $url to $saveAs" 
                 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 
                 $downloader = new-object System.Net.WebClient 
                 $downloader.DownloadFile($url, $saveAs) 
@@ -122,6 +122,7 @@ Resources:
 
                 $ipAddress = Get-MyPublicIPAddress 
                 $ipAddress = $ipAddress.Trim() 
+                $computerName = $env:COMPUTERNAME
 
                 Write-Output "Public IP address: " + $ipAddress 
 
@@ -129,36 +130,36 @@ Resources:
 
                 Set-Location "${env:ProgramFiles}\Octopus Deploy\Tentacle" 
 
-                & .\tentacle.exe create-instance --instance "Tentacle" --config $tentacleConfigFile --console | Write-Host 
+                & .\tentacle.exe create-instance --instance "Tentacle" --config $tentacleConfigFile --console | Write-Output 
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on create-instance" 
                 } 
-                & .\tentacle.exe configure --instance "Tentacle" --home $tentacleHomeDirectory --console | Write-Host 
+                & .\tentacle.exe configure --instance "Tentacle" --home $tentacleHomeDirectory --console | Write-Output 
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on configure" 
                 } 
-                & .\tentacle.exe configure --instance "Tentacle" --app $tentacleAppDirectory --console | Write-Host 
+                & .\tentacle.exe configure --instance "Tentacle" --app $tentacleAppDirectory --console | Write-Output 
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on configure" 
                 } 
-                & .\tentacle.exe configure --instance "Tentacle" --port $tentacleListenPort --console | Write-Host 
+                & .\tentacle.exe configure --instance "Tentacle" --port $tentacleListenPort --console | Write-Output 
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on configure" 
                 } 
-                & .\tentacle.exe new-certificate --instance "Tentacle" --console | Write-Host 
+                & .\tentacle.exe new-certificate --instance "Tentacle" --console | Write-Output 
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on creating new certificate" 
                 } 
-                & .\tentacle.exe configure --instance "Tentacle" --trust $octopusServerThumbprint --console  | Write-Host 
+                & .\tentacle.exe configure --instance "Tentacle" --trust $octopusServerThumbprint --console  | Write-Output 
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on configure" 
                 } 
-                & .\tentacle.exe register-with --instance "Tentacle" --server $octopusServerUrl --role "Database-TerraForm" --role "Web-TerraForm" --environment "Dev" --environment "Test" --environment "Pre-Prod" --environment "Production" --name $env:COMPUTERNAME --publicHostName $ipAddress --apiKey $octopusApiKey --comms-style TentaclePassive --force --console | Write-Host 
+                & .\tentacle.exe register-with --instance "Tentacle" --server $octopusServerUrl --role "Database-TerraForm" --role "Web-TerraForm" --environment "Dev" --environment "Test" --environment "Pre-Prod" --environment "Production" --name $computerName --publicHostName $ipAddress --apiKey $octopusApiKey --comms-style TentaclePassive --force --console | Write-Output 
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on register-with" 
                 } 
 
-                & .\tentacle.exe service --instance "Tentacle" --install --start --console | Write-Host 
+                & .\tentacle.exe service --instance "Tentacle" --install --start --console | Write-Output 
                 if ($lastExitCode -ne 0) { 
                   throw "Installation failed on service install" 
                 } 
