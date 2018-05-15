@@ -30,8 +30,7 @@ Resources:
         - AssociatePublicIpAddress: "true"
           DeviceIndex: "0"
           GroupSet: !Ref VPCParameter
-          SubnetId: !Ref SubnetIdParameter
-      SubnetId: 
+          SubnetId: !Ref SubnetIdParameter      
       InstanceType: 
         Ref: InstanceTypeParameter
       SecurityGroupIds: 
