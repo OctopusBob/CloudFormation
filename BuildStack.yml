@@ -35,9 +35,6 @@ Resources:
           SubnetId: !Ref SubnetIdParameter
       InstanceType: 
         Ref: InstanceTypeParameter
-      SecurityGroupIds: 
-        - 
-          !Ref SecurityGroupIdParameter
       KeyName: OhioTestEnvironment
       IamInstanceProfile: !Ref IAMInstanceProfileParameter
       Tags:
