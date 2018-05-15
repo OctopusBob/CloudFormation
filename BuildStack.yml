@@ -22,7 +22,7 @@ Parameters:
     Type: String
     Default: vpc-3c611054
 Resources:
-  Instance:
+  #{aws.instance-name}:
     Type: 'AWS::EC2::Instance'
     Properties:
       ImageId: !Ref AMI
@@ -57,6 +57,7 @@ Resources:
               $octopusApiKey = "#{OctopusApiKey}" 
               $octopusServerThumbprint = "#{OctopusServerThumbprint}" 
               $tentacleListenPort = 10933 
+              $environmentToDeployTo = "#{Octopus.Environment.Name}"
               $tentacleHomeDirectory = "C:\Octopus" 
               $tentacleAppDirectory = "C:\Octopus\Applications" 
               $tentacleConfigFile = "C:\Octopus\Tentacle\Tentacle.config" 
@@ -139,7 +140,7 @@ Resources:
               if ($lastExitCode -ne 0) { 
                 throw "Installation failed on configure" 
               } 
-              & .\tentacle.exe register-with --instance "Tentacle" --server $octopusServerUrl --role "Database-TerraForm" --role "Web-TerraForm" --environment "Dev" --environment "Test" --environment "Pre-Prod" --environment "Prod" --name $computerName --publicHostName $ipAddress --apiKey $octopusApiKey --comms-style TentaclePassive --force --console | Write-Output
+              & .\tentacle.exe register-with --instance "Tentacle" --server $octopusServerUrl --role "Database-TerraForm" --role "Web-TerraForm" --environment $environmentToDeployTo --name $computerName --publicHostName $ipAddress --apiKey $octopusApiKey --comms-style TentaclePassive --force --console | Write-Output
               if ($lastExitCode -ne 0) { 
                 throw "Installation failed on register-with" 
               } 
