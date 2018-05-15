@@ -29,7 +29,9 @@ Resources:
       NetworkInterfaces: 
         - AssociatePublicIpAddress: "true"
           DeviceIndex: "0"
-          GroupSet: !Ref VPCParameter
+          GroupSet: 
+           - 
+              !Ref VPCParameter
           SubnetId: 
             -
               !Ref SubnetIdParameter      
