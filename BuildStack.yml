@@ -15,6 +15,9 @@ Parameters:
     Type: String
     MinLength: "1"
     Default: sg-a19f7acb
+  IAMInstanceProfileParameter:
+    Type: String
+    Default: CodeDeployRole-EC2
 Resources:
   Instance:
     Type: 'AWS::EC2::Instance'
@@ -27,6 +30,7 @@ Resources:
         - 
           !Ref SecurityGroupIdParameter
       KeyName: OhioTestEnvironment
+      IamInstanceProfile: !Ref IAMInstanceProfileParameter
       Tags:
         -
           Key: Name
