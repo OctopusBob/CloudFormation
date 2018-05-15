@@ -64,7 +64,7 @@ Resources:
               Dism /Online /Enable-Feature /FeatureName:IIS-WindowsAuthentication /All
               Dism /online /enable-feature /featurename:NetFX3 /All
               
-               Write-Output "Open port 8088 on Windows Firewall" 
+              Write-Output "Open port 8088 on Windows Firewall" 
               & netsh.exe firewall add portopening TCP 8088 "Trading Website" 
  
               $tentacleDownloadPath = "https://octopus.com/downloads/latest/WindowsX64/OctopusTentacle" 
@@ -122,7 +122,7 @@ Resources:
 
                 $ipAddress = Get-MyPublicIPAddress 
                 $ipAddress = $ipAddress.Trim() 
-                $computerName = $env:COMPUTERNAME
+                $computerName = "${env:COMPUTERNAME}"
 
                 Write-Output "Public IP address: " + $ipAddress 
 
