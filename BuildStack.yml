@@ -32,9 +32,7 @@ Resources:
           GroupSet: 
            - 
               !Ref VPCParameter
-          SubnetId: 
-            -
-              !Ref SubnetIdParameter      
+          SubnetId: !Ref SubnetIdParameter
       InstanceType: 
         Ref: InstanceTypeParameter
       SecurityGroupIds: 
