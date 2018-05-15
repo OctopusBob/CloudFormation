@@ -18,12 +18,20 @@ Parameters:
   IAMInstanceProfileParameter:
     Type: String
     Default: CodeDeployRole-EC2
+  VPCParameter:
+    Type: String
+    Default: vpc-3c611054
 Resources:
   Instance:
     Type: 'AWS::EC2::Instance'
     Properties:
       ImageId: !Ref AMI
-      SubnetId: !Ref SubnetIdParameter
+      NetworkInterfaces: 
+        - AssociatePublicIpAddress: "true"
+          DeviceIndex: "0"
+          GroupSet: !Ref VPCParameter
+          SubnetId: !Ref SubnetIdParameter
+      SubnetId: 
       InstanceType: 
         Ref: InstanceTypeParameter
       SecurityGroupIds: 
