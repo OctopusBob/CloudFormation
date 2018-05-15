@@ -150,18 +150,5 @@ Resources:
               } 
 
               Write-Output "Tentacle commands complete"
-
-              Write-Output "Configure IIS using DISM"
-              Dism /Online /Enable-Feature /FeatureName:IIS-ASPNET /All | Write-Output
-              Dism /Online /Enable-Feature /FeatureName:IIS-ASPNET45 /All | Write-Output
-              Dism /Online /Enable-Feature /FeatureName:IIS-CertProvider /All | Write-Output
-              Dism /Online /Enable-Feature /FeatureName:IIS-HttpRedirect /All | Write-Output
-              Dism /Online /Enable-Feature /FeatureName:IIS-BasicAuthentication /All | Write-Output
-              Dism /Online /Enable-Feature /FeatureName:IIS-WebSockets /All | Write-Output
-              Dism /Online /Enable-Feature /FeatureName:IIS-ApplicationInit /All | Write-Output
-              Dism /Online /Enable-Feature /FeatureName:IIS-CustomLogging /All | Write-Output
-              Dism /Online /Enable-Feature /FeatureName:IIS-ManagementService /All | Write-Output
-              Dism /Online /Enable-Feature /FeatureName:WCF-Services45 /All | Write-Output
-              Dism /Online /Enable-Feature /FeatureName:WCF-HTTP-Activation45 /All | Write-Output
-              Dism /Online /Enable-Feature /FeatureName:IIS-WindowsAuthentication /All | Write-Output
+              
               </powershell>
