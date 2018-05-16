@@ -48,10 +48,6 @@ Resources:
             - |-
               <powershell>
               Start-Transcript -path "C:\Bootstrap.txt" -append  
-
-              Dism /Online /Enable-Feature /FeatureName:IIS-ASPNET45 /All | Write-Output
-              Dism /Online /Enable-Feature /FeatureName:IIS-CertProvider /All | Write-Output
-              Dism /Online /Enable-Feature /FeatureName:IIS-ManagementService /All | Write-Output
              
               Write-Output "Open port 8088 on Windows Firewall" 
               & netsh.exe firewall add portopening TCP 8088 "Trading Website" 
