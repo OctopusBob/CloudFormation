@@ -167,8 +167,7 @@ Resources:
               $sqlConnection.Open()
               
               Write-Output "Running the if not exists then create user command on the server"
-              $command.CommandText = "IF NOT EXISTS(SELECT 1 FROM sys.server_principals WHERE name = '$octopusAdminDatabaseUser')
-                CREATE LOGIN [$octopusAdminDatabaseUser] with Password='$octopusAdminDatabasePassword', default_database=[master]"            
+              $command.CommandText = "CREATE LOGIN [$octopusAdminDatabaseUser] with Password='$octopusAdminDatabasePassword', default_database=master"            
               $command.ExecuteNonQuery()
               
               Write-Output "Granting the sysadmin role to $octopusAdminDatabaseUser"
