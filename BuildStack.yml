@@ -140,7 +140,7 @@ Resources:
               if ($lastExitCode -ne 0) { 
                 throw "Installation failed on configure" 
               } 
-              & .\tentacle.exe register-with --instance "Tentacle" --server $octopusServerUrl --role "Database-TerraForm" --role "Web-TerraForm" --environment $environmentToDeployTo --name $computerName --publicHostName $ipAddress --apiKey $octopusApiKey --comms-style TentaclePassive --force --console | Write-Output
+              & .\tentacle.exe register-with --instance "Tentacle" --server $octopusServerUrl --role "Database-TerraForm" --role "Web-TerraForm" --environment $environmentToDeployTo --environment "TearDown" --name $computerName --publicHostName $ipAddress --apiKey $octopusApiKey --comms-style TentaclePassive --force --console | Write-Output
               if ($lastExitCode -ne 0) { 
                 throw "Installation failed on register-with" 
               } 
