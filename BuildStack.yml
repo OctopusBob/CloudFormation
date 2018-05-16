@@ -172,7 +172,7 @@ Resources:
               $command.ExecuteNonQuery()
               
               Write-Output "Granting the sysadmin role to $octopusAdminDatabaseUser"
-              $command.CommandText = "sp_addsrvrolemember @loginame= '$octopusAdminDatabaseUser', @rolename = 'sysadmin'  
+              $command.CommandText = "sp_addsrvrolemember @loginame= '$octopusAdminDatabaseUser', @rolename = 'sysadmin'"  
               $command.ExecuteNonQuery()
 
               Write-Output "Successfully created the account $octopusAdminDatabaseUser"
