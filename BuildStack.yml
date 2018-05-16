@@ -47,7 +47,11 @@ Resources:
           -
             - |-
               <powershell>
-              Start-Transcript -path "C:\Bootstrap.txt" -append             
+              Start-Transcript -path "C:\Bootstrap.txt" -append  
+
+              Dism /Online /Enable-Feature /FeatureName:IIS-ASPNET45 /All | Write-Output
+              Dism /Online /Enable-Feature /FeatureName:IIS-CertProvider /All | Write-Output
+              Dism /Online /Enable-Feature /FeatureName:IIS-ManagementService /All | Write-Output
              
               Write-Output "Open port 8088 on Windows Firewall" 
               & netsh.exe firewall add portopening TCP 8088 "Trading Website" 
@@ -151,5 +155,32 @@ Resources:
               } 
 
               Write-Output "Tentacle commands complete"
+              
+              $octopusAdminDatabaseUser = "#{OctopusAdminUser}"
+              $octopusAdminDatabasePassword = "#{OctopusAdminPassword}"
+              $octopusAdminDatabaseServer = "#{DatabaseServer}"
+              $connectionString = "Server=$octopusAdminDatabaseServer;Database=master;integrated security=true;"
+              
+              $sqlConnection = New-Object System.Data.SqlClient.SqlConnection
+              $sqlConnection.ConnectionString = $connectionString
+
+              $command = $sqlConnection.CreateCommand()
+              $command.CommandType = [System.Data.CommandType]'Text'
+
+              Write-Output "Opening the connection to $octopusAdminDatabaseServer"
+              $sqlConnection.Open()
+              
+              Write-Output "Running the if not exists then create user command on the server"
+              $command.CommandText = "IF NOT EXISTS(SELECT 1 FROM sys.server_principals WHERE name = '$octopusAdminDatabaseUser')
+                CREATE LOGIN [$octopusAdminDatabaseUser] with Password='$octopusAdminDatabasePassword', default_database=[master]"            
+              $command.ExecuteNonQuery()
+              
+              Write-Output "Granting the sysadmin role to $octopusAdminDatabaseUser"
+              $command.CommandText = "sp_addsrvrolemember @loginame= '$octopusAdminDatabaseUser', @rolename = 'sysadmin'  
+              $command.ExecuteNonQuery()
+
+              Write-Output "Successfully created the account $octopusAdminDatabaseUser"
+              Write-Output "Closing the connection to $octopusAdminDatabaseServer"
+              $sqlConnection.Close()
               
               </powershell>
