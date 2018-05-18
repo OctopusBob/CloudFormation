@@ -2,25 +2,25 @@ AWSTemplateFormatVersion: 2010-09-09
 Parameters:
   InstanceTypeParameter:
     Type: String
-    Default: t2.micro
+    Default: #{aws.instance-type}
     Description: Enter instance size. Default is m3.medium.
   AMI:
     Type: String
-    Default: ami-ac8dbdc9
+    Default: #{aws.ami-image}
     Description: AMI Image
   SubnetIdParameter:
     Type: String
-    Default: subnet-ee74d194
+    Default: #{aws.subnet-id}
   SecurityGroupIdParameter:
     Type: String
     MinLength: "1"
-    Default: sg-a19f7acb
+    Default: #{aws-security-group-id}
   IAMInstanceProfileParameter:
     Type: String
-    Default: CodeDeployRole-EC2
+    Default: #{aws.iam-profile-name}
   VPCParameter:
     Type: String
-    Default: vpc-3c611054
+    Default: #{aws.vpc-security-group-id}
 Resources:
   #{aws.instance-name}:
     Type: 'AWS::EC2::Instance'
@@ -35,12 +35,12 @@ Resources:
           SubnetId: !Ref SubnetIdParameter
       InstanceType: 
         Ref: InstanceTypeParameter
-      KeyName: OhioTestEnvironment
+      KeyName: #{aws.security-key-name}
       IamInstanceProfile: !Ref IAMInstanceProfileParameter
       Tags:
         -
           Key: Name
-          Value: Instance
+          Value: #{aws.instance-name}
       UserData:
         Fn::Base64: !Join
           - ''
@@ -48,6 +48,46 @@ Resources:
             - |-
               <powershell>
               Start-Transcript -path "C:\Bootstrap.txt" -append  
+              
+              $octopusAdminDatabaseUser = "#{OctopusAdminUser}"
+              $octopusAdminDatabasePassword = "#{OctopusAdminPassword}"
+              $octopusAdminDatabaseServer = "#{DatabaseServer}"
+              $connectionString = "Server=$octopusAdminDatabaseServer;Database=master;integrated security=true;"
+              
+              $sqlConnection = New-Object System.Data.SqlClient.SqlConnection
+              $sqlConnection.ConnectionString = $connectionString
+
+              $command = $sqlConnection.CreateCommand()
+              $command.CommandType = [System.Data.CommandType]'Text'
+
+              Write-Output "Opening the connection to $octopusAdminDatabaseServer"
+              $sqlConnection.Open()
+              
+              Write-Output "Running the if not exists then create user command on the server"
+              $command.CommandText = "CREATE LOGIN [$octopusAdminDatabaseUser] with Password='$octopusAdminDatabasePassword', default_database=master"            
+              $command.ExecuteNonQuery()
+              
+              Write-Output "Granting the sysadmin role to $octopusAdminDatabaseUser"
+              $command.CommandText = "sp_addsrvrolemember @loginame= '$octopusAdminDatabaseUser', @rolename = 'sysadmin'"  
+              $command.ExecuteNonQuery()
+
+              Write-Output "Successfully created the account $octopusAdminDatabaseUser"
+              Write-Output "Closing the connection to $octopusAdminDatabaseServer"
+              $sqlConnection.Close()
+              
+              $sqlRegistryPath = "HKLM:\Software\Microsoft\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQLServer"
+              $sqlRegistryLoginName = "LoginMode"
+              
+              $sqlRegistryLoginValue = "2"
+              
+              New-ItemProperty -Path $sqlRegistryPath -Name $sqlRegistryLoginName -Value $sqlRegistryLoginValue -PropertyType DWORD -Force
+              
+              net stop MSSQLSERVER /y
+              net start MSSQLSERVER
+              
+              Dism /Online /Enable-Feature /FeatureName:IIS-ASPNET45 /All | Write-Output
+              Dism /Online /Enable-Feature /FeatureName:IIS-CertProvider /All | Write-Output
+              Dism /Online /Enable-Feature /FeatureName:IIS-ManagementService /All | Write-Output
              
               Write-Output "Open port 8088 on Windows Firewall" 
               & netsh.exe firewall add portopening TCP 8088 "Trading Website" 
@@ -108,7 +148,7 @@ Resources:
 
                 $ipAddress = Get-MyPublicIPAddress 
                 $ipAddress = $ipAddress.Trim() 
-                $computerName = "${env:COMPUTERNAME}"
+                $computerName = "#{aws.register-machine-name-prefix}"
 
                 Write-Output "Public IP address: " + $ipAddress 
 
@@ -150,32 +190,6 @@ Resources:
                 throw "Installation failed on service install" 
               } 
 
-              Write-Output "Tentacle commands complete"
-              
-              $octopusAdminDatabaseUser = "#{OctopusAdminUser}"
-              $octopusAdminDatabasePassword = "#{OctopusAdminPassword}"
-              $octopusAdminDatabaseServer = "#{DatabaseServer}"
-              $connectionString = "Server=$octopusAdminDatabaseServer;Database=master;integrated security=true;"
-              
-              $sqlConnection = New-Object System.Data.SqlClient.SqlConnection
-              $sqlConnection.ConnectionString = $connectionString
-
-              $command = $sqlConnection.CreateCommand()
-              $command.CommandType = [System.Data.CommandType]'Text'
-
-              Write-Output "Opening the connection to $octopusAdminDatabaseServer"
-              $sqlConnection.Open()
-              
-              Write-Output "Running the if not exists then create user command on the server"
-              $command.CommandText = "CREATE LOGIN [$octopusAdminDatabaseUser] with Password='$octopusAdminDatabasePassword', default_database=master"            
-              $command.ExecuteNonQuery()
-              
-              Write-Output "Granting the sysadmin role to $octopusAdminDatabaseUser"
-              $command.CommandText = "sp_addsrvrolemember @loginame= '$octopusAdminDatabaseUser', @rolename = 'sysadmin'"  
-              $command.ExecuteNonQuery()
-
-              Write-Output "Successfully created the account $octopusAdminDatabaseUser"
-              Write-Output "Closing the connection to $octopusAdminDatabaseServer"
-              $sqlConnection.Close()
+              Write-Output "Tentacle commands complete"             
               
               </powershell>
